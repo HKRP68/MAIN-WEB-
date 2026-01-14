@@ -23,10 +23,30 @@ const App: React.FC = () => {
   const handleFormatSelect = (format: MatchFormat) => {
     setSelectedFormat(format);
     setIsTransitioning(true);
-    // Simulate navigation transition
+    
+    // Animated redirect to specific Vercel apps
     setTimeout(() => {
-      setCurrentView('MATCH_CONFIG');
-      setIsTransitioning(false);
+      if (format === MatchFormat.TEST) {
+        window.location.href = 'https://testmatchmanagercaod.vercel.app';
+      } else {
+        window.location.href = 'https://caodlimitedover.vercel.app';
+      }
+    }, 1500);
+  };
+
+  const handleDiscordJoin = () => {
+    setIsTransitioning(true);
+    // Animated redirect to Discord
+    setTimeout(() => {
+      window.location.href = 'https://discord.gg/AhBkPPQshK';
+    }, 1500);
+  };
+
+  const handleSimulatorRedirect = () => {
+    setIsTransitioning(true);
+    // Animated redirect to Simulator
+    setTimeout(() => {
+      window.location.href = 'https://hkrp68.github.io/CricketAssociation-of-discord-/';
     }, 1500);
   };
 
@@ -37,7 +57,7 @@ const App: React.FC = () => {
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-8 font-sync text-2xl tracking-tighter"
+          className="mt-8 font-sync text-2xl tracking-tighter text-center"
         >
           PREPARING THE PITCH...
         </motion.p>
@@ -74,61 +94,33 @@ const App: React.FC = () => {
             <Header />
             <Hero />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-20 relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-20 relative items-start">
               {/* Asymmetrical line decoration */}
-              <div className="absolute -top-10 -left-10 w-24 h-24 border-t-8 border-l-8 border-black hidden md:block"></div>
+              <div className="absolute -top-10 -left-10 w-24 h-24 border-t-8 border-l-8 border-black hidden lg:block"></div>
               
               <ActionCard
                 title="JOIN OUR DISCORD COMMUNITY"
                 description="Connect with players, get updates, and join the conversation in our official hub."
-                link="https://discord.gg/AhBkPPQshK"
+                onAction={handleDiscordJoin}
                 variant="primary"
                 index={0}
               />
               <ActionCard
                 title="TOURNAMENT MANAGER"
                 description="Create, manage, or join cricket tournaments. Select your weapon of choice."
-                onExpand={() => {}}
                 variant="secondary"
                 isTournamentManager
                 onFormatSelect={handleFormatSelect}
                 index={1}
               />
-            </div>
-          </motion.div>
-        )}
-
-        {currentView === 'MATCH_CONFIG' && (
-          <motion.div
-            key="config"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center min-h-screen text-center p-10 bg-black text-white relative z-10"
-          >
-            <div className="absolute top-10 left-10 text-9xl font-black opacity-10 pointer-events-none">CAD</div>
-            <motion.div 
-              initial={{ rotate: 180, scale: 0 }}
-              animate={{ rotate: 0, scale: 1 }}
-              className="mb-12"
-            >
-              <img 
-                src="https://i.ibb.co/ccdq3Ct9/file-00000000743071f488fdc3b85eadcd3d.png" 
-                alt="Logo" 
-                className="w-32 h-32 md:w-48 md:h-48 object-contain bg-white p-4 border-8 border-yellow-400"
+              <ActionCard
+                title="PLAY CRICKET SIMULATOR"
+                description="Step onto the pitch and experience the thrill of the game in our advanced web simulator."
+                onAction={handleSimulatorRedirect}
+                variant="tertiary"
+                index={2}
               />
-            </motion.div>
-            <h1 className="text-6xl md:text-9xl font-sync font-black mb-8 leading-none tracking-tighter">
-              {selectedFormat === MatchFormat.TEST ? 'THE GRIND' : 'THE BLITZ'}
-            </h1>
-            <p className="text-xl md:text-3xl border-4 border-white p-4 bg-red-600 brutalist-shadow font-bold uppercase">
-              FORMAT SELECTED: {selectedFormat?.replace('_', ' ')}
-            </p>
-            <button 
-              onClick={() => setCurrentView('HOME')}
-              className="mt-20 px-10 py-5 bg-yellow-400 text-black font-sync font-black hover:bg-white transition-colors border-4 border-black brutalist-shadow"
-            >
-              ← GO BACK TO CLUBHOUSE
-            </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

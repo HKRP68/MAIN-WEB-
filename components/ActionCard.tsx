@@ -6,9 +6,8 @@ import { MatchFormat } from '../types';
 interface ActionCardProps {
   title: string;
   description: string;
-  link?: string;
-  onExpand?: () => void;
-  variant: 'primary' | 'secondary';
+  onAction?: () => void;
+  variant: 'primary' | 'secondary' | 'tertiary';
   isTournamentManager?: boolean;
   onFormatSelect?: (format: MatchFormat) => void;
   index: number;
@@ -17,7 +16,7 @@ interface ActionCardProps {
 const ActionCard: React.FC<ActionCardProps> = ({ 
   title, 
   description, 
-  link, 
+  onAction, 
   variant, 
   isTournamentManager, 
   onFormatSelect,
@@ -25,12 +24,30 @@ const ActionCard: React.FC<ActionCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const getVariantBg = () => {
+    switch (variant) {
+      case 'primary': return 'bg-[#5865F2]'; // Discord Blurple
+      case 'secondary': return 'bg-[#EF4444]'; // Red
+      case 'tertiary': return 'bg-[#22C55E]'; // Green
+      default: return 'bg-[#000000]';
+    }
+  };
+
   const cardClasses = `
     relative p-8 border-4 border-black brutalist-shadow brutalist-shadow-hover brutalist-shadow-active 
     transition-all duration-200 flex flex-col h-full cursor-pointer
-    ${variant === 'primary' ? 'bg-[#5865F2]' : 'bg-[#EF4444]'}
+    ${getVariantBg()}
     ${index === 1 ? 'md:translate-y-12' : ''}
+    ${index === 2 ? 'lg:translate-y-24' : ''}
   `;
+
+  const handleClick = () => {
+    if (isTournamentManager) {
+      setIsExpanded(!isExpanded);
+    } else if (onAction) {
+      onAction();
+    }
+  };
 
   return (
     <motion.div
@@ -38,10 +55,10 @@ const ActionCard: React.FC<ActionCardProps> = ({
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.8 + index * 0.2 }}
       className={cardClasses}
-      onClick={() => isTournamentManager ? setIsExpanded(!isExpanded) : window.open(link, '_blank')}
+      onClick={handleClick}
     >
       <div className="flex-1">
-        <h2 className="text-3xl md:text-4xl font-black mb-4 leading-none text-white flex items-center gap-4">
+        <h2 className="text-3xl md:text-4xl font-black mb-4 leading-none text-white flex items-center gap-4 uppercase">
           {title}
           {!isTournamentManager && (
              <motion.span 
@@ -91,7 +108,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
       {/* Persistent Glow for CTA */}
       {variant === 'primary' && (
         <motion.div 
-          className="absolute inset-0 border-4 border-white opacity-0"
+          className="absolute inset-0 border-4 border-white opacity-0 pointer-events-none"
           animate={{ opacity: [0, 0.4, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
         />
@@ -111,13 +128,13 @@ interface FormatButtonProps {
 
 const FormatButton: React.FC<FormatButtonProps> = ({ label, sub, color, textColor, icon, onClick }) => (
   <motion.button
-    whileHover={{ scale: 1.05, x: 10 }}
-    whileTap={{ scale: 0.95 }}
+    whileHover={{ scale: 1.02, x: 5 }}
+    whileTap={{ scale: 0.98 }}
     onClick={(e) => {
       e.stopPropagation();
       onClick();
     }}
-    className={`${color} ${textColor} p-4 border-4 border-black flex items-center justify-between brutalist-shadow group`}
+    className={`${color} ${textColor} p-4 border-4 border-black flex items-center justify-between brutalist-shadow group w-full`}
   >
     <div className="flex items-center gap-4">
       {icon}
